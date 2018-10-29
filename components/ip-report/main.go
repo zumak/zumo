@@ -19,5 +19,7 @@ func main() {
 		logrus.Fatal(err)
 	}
 
+	logrus.Debugf("config: %+v", config)
+
 	// run grpc server
 }
