@@ -1,0 +1,26 @@
+version: '3.3'
+services:
+  traefik::
+    image: arm64v8/traefik
+    port:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    volumes:
+      type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+    command:
+      - "--docker "
+      - "--docker.swarmMode"
+      - "--docker.domain=home.blumir.me"
+      - "--docker.watch"
+      - "--api"
+    networks:
+      - proxy
+networks:
+  proxy:
+    external: true
