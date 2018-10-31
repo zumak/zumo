@@ -10,14 +10,14 @@ import (
 )
 
 type Config struct {
-	Bind     string `env:"BIND"`
-	Endpoint string `env:"ENDPOINT"`
+	Bind     string `env:"BIND" required:"true"`
+	Endpoint string `env:"ENDPOINT" required:"true"`
 }
 
 func main() {
 	fmt.Println("vim-go")
 	config := &Config{}
-	if err := env.Set(&config); err != nil {
+	if err := env.Set(config); err != nil {
 		logrus.Fatal(err)
 	}
 
@@ -25,7 +25,7 @@ func main() {
 
 	app := gin.Default()
 
-	app.POST("/*", func(c *gin.Context) {
+	app.POST("/*path", func(c *gin.Context) {
 		msg := &struct {
 			Text string
 		}{}

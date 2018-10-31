@@ -5,6 +5,6 @@ ADD . /src
 
 RUN go build  -o ip-report ./components/ip-report/
 
-FROM alpine
+FROM fedora
 COPY --from=builder /src/ip-report /bin/
 CMD ip-report
