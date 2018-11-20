@@ -1,0 +1,62 @@
+version: '3.5'
+services:
+  docker-proxy:
+    # basic docker proxy with basic auth
+    image: nginx
+    deploy:
+      replicas: 1
+    user: root
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    configs:
+      - source: docker-proxy-conf
+        target: /etc/nginx/nginx.conf
+      - source: docker-proxy-auth
+        target: /var/lib/.htpasswd
+    ports:
+      - "12376:2376"
+  gluster-fs:
+    # TODO for remote volume
+    image: fedora
+    deploy:
+      mode: global
+    command: ["tail", "-f", "/etc/hosts"]
+  plugin-install:
+    # TODO docker volume plugin install
+    image: fedora
+    deploy:
+      mode: global
+    command: ["tail", "-f", "/etc/hosts"]
+  traefik::
+    image: arm64v8/traefik
+    port:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    volumes:
+      type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+    command:
+      - "--docker "
+      - "--docker.swarmMode"
+      - "--docker.domain=home.blumir.me"
+      - "--docker.watch"
+      - "--api"
+    networks:
+      - proxy
+configs:
+  docker-proxy-conf:
+    file: system/docker-proxy.conf
+  docker-proxy-auth:
+    file: system/.htpasswd
+networks:
+  proxy:
+    name: proxy
+    driver: overlay
+    external: true

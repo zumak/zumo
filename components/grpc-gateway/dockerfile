@@ -1,0 +1,32 @@
+FROM fedora:29 as builder
+
+RUN  yum install -y \
+    ansible git golang make findutils \
+    protobuf protobuf-compiler protobuf-devel \
+    && yum clean all
+
+ENV GOPATH=/root/go
+ENV PATH=$PATH:/root/go/bin
+
+# tools
+## protobuf, grpc
+RUN  go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
+RUN  go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+RUN  go get -u github.com/golang/protobuf/protoc-gen-go
+RUN  go get -u google.golang.org/grpc
+
+WORKDIR /src
+
+ADD . /src
+RUN protoc \
+	-I . \
+	-I $GOPATH \
+	-I $GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
+	--go_out=plugins=grpc:. \
+	--grpc-gateway_out=logtostderr=true:. \
+	components/file-manager/datatype/*.proto
+RUN go build  -o grpc-gateway components/grpc-gateway
+
+FROM fedora
+COPY --from=builder /src/file-manager /bin/
+CMD grpc-gateway

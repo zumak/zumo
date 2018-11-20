@@ -5,7 +5,8 @@ services:
     deploy:
       replicas: 1
     volumes:
-      - source: etcd-certs
+      - type: volume
+        source: etcd-certs
         target: /etc/ssl/certs
     command:
       - "-name=etcd0"
@@ -22,8 +23,34 @@ services:
       labels:
         traefik.port: 9000
       replicas: 1
+    environment:
+      BIND: :9000
+      ENDPOINT: etcd:2379
+      DBPATH: /data/data.db
     networks:
       - proxy
+    volumes:
+      - type: volume
+        source: ip-report-data
+        target: /data
+  file-manager:
+    image: bluemir/zumo-file-manager
+    deploy:
+      labels:
+        traefik.port: 9000
+      replicas: 1
+    environment:
+      bind: :9000
+      base-path: /disk
+    network:
+      - proxy
+    volumes:
+      - type: bind
+        source: /home/bluemir/disk
+        target: /disk
 networks:
   proxy:
     external: true
+volumes:
+  etcd-certs:
+  ip-report-data:

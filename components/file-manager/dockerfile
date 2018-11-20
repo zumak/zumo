@@ -1,0 +1,37 @@
+FROM fedora:29 as builder
+
+RUN  yum install -y \
+    ansible git golang make findutils \
+    protobuf protobuf-compiler protobuf-devel \
+    && yum clean all
+
+ENV GOPATH=/root/go
+ENV PATH=$PATH:/root/go/bin
+
+# tools
+## protobuf, grpc
+RUN  go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
+RUN  go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+RUN  go get -u github.com/golang/protobuf/protoc-gen-go
+RUN  go get -u google.golang.org/grpc
+## rice
+RUN  go get -u github.com/GeertJohan/go.rice/rice
+
+WORKDIR /src
+
+COPY go.mod go.sum /src/
+RUN go mod vendor
+
+ADD . /src
+RUN protoc \
+	-I . \
+	-I $GOPATH \
+	-I $GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
+	--go_out=plugins=grpc:. \
+	--grpc-gateway_out=logtostderr=true:. \
+	datatype/*.proto
+RUN go build  -o grpc-gateway .
+
+FROM fedora
+COPY --from=builder /src/grpc-gateway /bin/
+CMD grpc-gateway

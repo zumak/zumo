@@ -1,0 +1,12 @@
+FROM alpine as builder
+RUN apk add git
+
+RUN git clone https://github.com/bluemir/web-components /web-components
+
+
+FROM nginx
+
+ADD dashboard.conf /etc/nginx/conf.d/dashboard.conf
+
+ADD app /web
+COPY --from=builder /web-components/ /web/lib/web-components

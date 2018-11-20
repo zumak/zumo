@@ -1,9 +1,0 @@
-pipeline:
-  ip-report:
-    image: plugins/docker:linux-arm64
-    # arm64v8?
-    repo: bluemir/zumo-ip-report
-    #secrets: [ docker_username, docker_password ]
-    # make secrets in docker
-    dockerfile: components/ip-report
-    #build_args:
