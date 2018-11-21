@@ -39,11 +39,10 @@ services:
       placement:
         constraints: [node.role == manager]
     volumes:
-      type: bind
-      source: /var/run/docker.sock
-      target: /var/run/docker.sock
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
     command:
-      - "--docker "
       - "--docker.swarmMode"
       - "--docker.domain=home.blumir.me"
       - "--docker.watch"

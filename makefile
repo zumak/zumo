@@ -11,9 +11,12 @@ clean:
 	docker stack rm zumo
 go-env:
 	docker run --rm -it -v `pwd`:/src --workdir /src golang bash
-system:
+system: system/.htpasswd
 	# ensure make proxy network
-	htpasswd -c system/.htpasswd $(shell whoami)
 	docker stack deploy -c system.yml system
+system/.htpasswd:
+	htpasswd -c system/.htpasswd $(shell whoami)
+hint:
+	@echo export DOCKER_HOST=home.bluemir.me:12376
 
 .PHONY: system
