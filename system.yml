@@ -29,9 +29,9 @@ services:
     deploy:
       mode: global
     command: ["tail", "-f", "/etc/hosts"]
-  traefik::
+  traefik:
     image: arm64v8/traefik
-    port:
+    ports:
       - 80:80
       - 443:443
       - 8080:8080
