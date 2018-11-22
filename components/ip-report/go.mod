@@ -14,6 +14,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/sirupsen/logrus v1.1.1
 	github.com/ugorji/go/codec v0.0.0-20181022190402-e5e69e061d4f // indirect
+	golang.org/x/crypto v0.0.0-20181112202954-3d3f9f413869 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
 	gopkg.in/yaml.v2 v2.2.1 // indirect
 )

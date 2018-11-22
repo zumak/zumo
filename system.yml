@@ -30,7 +30,7 @@ services:
       mode: global
     command: ["tail", "-f", "/etc/hosts"]
   traefik:
-    image: arm64v8/traefik
+    image: traefik
     ports:
       - 80:80
       - 443:443
