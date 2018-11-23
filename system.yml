@@ -47,11 +47,6 @@ services:
       - "--api"
     networks:
       - proxy
-configs:
-  docker-proxy-conf:
-    file: system/docker-proxy.conf
-  docker-proxy-auth:
-    file: system/.htpasswd
 networks:
   proxy:
     name: proxy
