@@ -1,16 +1,20 @@
 version: '3.5'
 services:
   docker-api-proxy:
-    # basic docker proxy with basic auth
-    image: bluemir/docker-api-proxy
+    # docker api proxy with AuthN/AuthZ
+    image: bluemir/docker-api-proxy:v1
     deploy:
+      placement:
+        constraints: [node.role == manager]
       replicas: 1
+    environment:
+      AUTHN: "token:${TOKEN}"
     volumes:
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
     ports:
-      - "12376:2376"
+      - "2376:2376"
   gluster-fs:
     # TODO for remote volume
     image: fedora
