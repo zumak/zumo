@@ -1,20 +1,14 @@
 version: '3.5'
 services:
-  docker-proxy:
+  docker-api-proxy:
     # basic docker proxy with basic auth
-    image: nginx
+    image: bluemir/docker-api-proxy
     deploy:
       replicas: 1
-    user: root
     volumes:
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
-    configs:
-      - source: docker-proxy-conf
-        target: /etc/nginx/nginx.conf
-      - source: docker-proxy-auth
-        target: /var/lib/.htpasswd
     ports:
       - "12376:2376"
   gluster-fs:
